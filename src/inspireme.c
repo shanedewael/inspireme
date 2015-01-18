@@ -2,9 +2,11 @@
 
 static Window *window;
 static Window *inspiration;
+static Window *juststop;
 static TextLayer *times;
 static TextLayer *dates;
 static TextLayer *inspire;
+static TextLayer *despire;
 static AppSync sync;
 static uint8_t sync_buffer[150];
 
@@ -12,14 +14,21 @@ enum InspirationKeys {
   QUOTE_TEMP_KEY = 0x0
 };
 
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   if (window_is_loaded(window)) {
     window_stack_push(inspiration, true);
   }
 }
 
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+  if (window_is_loaded(window)) {
+    window_stack_push(juststop, true);
+  }
+}
+
 static void click_config_provider(void *context) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
 
 static void sync_error(DictionaryResult dict_error, 
@@ -95,6 +104,20 @@ static void insp_window_unload(Window *inspiration) {
   text_layer_destroy(inspire);
 }
 
+static void stop_window_load(Window *juststop) {
+  despire = text_layer_create(GRect(0, 0, 134, 158));
+  text_layer_set_background_color(despire, GColorBlack);
+  text_layer_set_text_color(despire, GColorWhite);
+  text_layer_set_text_alignment(despire, GTextAlignmentCenter);
+  text_layer_set_font(despire, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
+  text_layer_set_text(despire, "This is your damn text");
+
+}
+
+static void stop_window_unload(Window *juststop) {
+  text_layer_destroy(despire);
+}
+
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   update_time();
 }
@@ -104,6 +127,7 @@ static void init() {
   window_set_background_color(window, GColorBlack);
   inspiration = window_create();
   window_set_background_color(inspiration, GColorBlack);
+  juststop = window_create();
 
   window_set_window_handlers(window, (WindowHandlers) {
     .load = main_window_load,
@@ -115,11 +139,19 @@ static void init() {
     .unload = insp_window_unload
   });
 
+  window_set_window_handlers(juststop, (WindowHandlers) {
+    .load = stop_window_load,
+    .unload = stop_window_unload
+  });
+
   app_message_open(150, 150);
   window_set_fullscreen(window, true);
   window_set_fullscreen(inspiration, true);
+  window_set_fullscreen(juststop, true);
   window_stack_push(inspiration, true);
+  window_stack_push(juststop, true);
   window_stack_push(window, true);
+  
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 }
 
