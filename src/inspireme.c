@@ -115,7 +115,7 @@ static void init() {
     .unload = insp_window_unload
   });
 
-  app_message_open(150, 64);
+  app_message_open(150, 150);
   window_set_fullscreen(window, true);
   window_set_fullscreen(inspiration, true);
   window_stack_push(inspiration, true);

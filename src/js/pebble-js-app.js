@@ -14,7 +14,11 @@ var getQuote = function() {
 
 //Process JSON
 var sendQuote = function(xhr) {
-	var response = JSON.parse(xhr.target.response);
+	try {
+		var response = JSON.parse(xhr.target.response);
+	} catch(err) {
+		var response = JSON.parse(xhr.target.response);
+	}
 	var quote = response.quoteText + "\n-" + response.quoteAuthor;
   Pebble.sendAppMessage({
     'motivate': quote
