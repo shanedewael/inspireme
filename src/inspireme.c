@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <stdlib.h>
 
 static Window *window;
 static Window *inspiration;
@@ -104,17 +105,53 @@ static void insp_window_unload(Window *inspiration) {
   text_layer_destroy(inspire);
 }
 
-static void stop_window_load(Window *juststop) {
-  despire = text_layer_create(GRect(0, 0, 134, 158));
+int random_num(int limit) {
+  int divisor = RAND_MAX/(limit+1);
+  int imback;
+  do { 
+    imback = rand() / divisor;
+  } while (imback > limit);
+  return imback;
+}
+
+const char * getbad() {
+  int rando = (int) random_num(50);
+  if (rando < 5) {
+    return "You're going nowhere in life, you condescending piece of monkey smegma";
+  } else if(rando < 10){
+    return "Wanna hear a joke? Your life. HAHAHAHA";
+  } else if(rando < 15) {
+    return "Move bitch, get out the way.";
+  } else if(rando < 20) {
+    return "You don't even go here";
+  } else if(rando < 25) {
+    return "Uh.";
+  } else if(rando < 30) {
+    return "I can't say anything bad about you, because you're 100\% fucked up";
+  } else if(rando < 35) {
+    return "Can you just make me a new app please?";
+  } else if(rando < 40) {
+    return "You're as ugly as my mom's chesthair";
+  } else if(rando < 45) {
+    return "Ha! GAYYYYYYY! (in the non-homophobic way)";
+  } else {
+    return "Just get out. Go.";
+  }
+}
+
+static void sto_window_load(Window *juststop) {
+  despire = text_layer_create(GRect(0, 50, 134, 158));
   text_layer_set_background_color(despire, GColorBlack);
   text_layer_set_text_color(despire, GColorWhite);
   text_layer_set_text_alignment(despire, GTextAlignmentCenter);
   text_layer_set_font(despire, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
-  text_layer_set_text(despire, "This is your damn text");
-
+  text_layer_set_text(despire, getbad());
+  layer_add_child(window_get_root_layer(juststop), text_layer_get_layer(despire));
 }
 
-static void stop_window_unload(Window *juststop) {
+
+
+static void sto_window_unload(Window *juststop) {
   text_layer_destroy(despire);
 }
 
@@ -128,6 +165,7 @@ static void init() {
   inspiration = window_create();
   window_set_background_color(inspiration, GColorBlack);
   juststop = window_create();
+  window_set_background_color(juststop, GColorBlack);
 
   window_set_window_handlers(window, (WindowHandlers) {
     .load = main_window_load,
@@ -140,14 +178,15 @@ static void init() {
   });
 
   window_set_window_handlers(juststop, (WindowHandlers) {
-    .load = stop_window_load,
-    .unload = stop_window_unload
+    .load = sto_window_load,
+    .unload = sto_window_unload
   });
 
   app_message_open(150, 150);
   window_set_fullscreen(window, true);
   window_set_fullscreen(inspiration, true);
   window_set_fullscreen(juststop, true);
+
   window_stack_push(inspiration, true);
   window_stack_push(juststop, true);
   window_stack_push(window, true);
@@ -158,6 +197,7 @@ static void init() {
 static void deinit() {
   window_destroy(window);
   window_destroy(inspiration);
+  window_destroy(juststop);
 }
 
 int main(void) {
