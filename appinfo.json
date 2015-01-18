@@ -1,0 +1,17 @@
+{
+  "uuid": "95fefef8-81ff-430d-8207-ce3337dcf0d7",
+  "shortName": "inspireme",
+  "longName": "inspireme",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
